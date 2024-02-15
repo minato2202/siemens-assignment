@@ -1,3 +1,10 @@
+# Define the provider
+provider "aws" {
+  region     = "reigon"
+  access_key = "access_key"
+  secret_key = "security_key"
+}
+
 # Define the VPC
 resource "aws_vpc" "my_vpc" {
   cidr_block = var.vpc_cidr_block
@@ -31,6 +38,21 @@ resource "aws_route53_zone" "private" {
   
   vpc {
     vpc_id               = aws_vpc.my_vpc.id
-    vpc_region           = "us-west-2"
+    vpc_region           = "region"
   }
+}
+
+
+module "web-application" {
+  source = "./web-application"
+
+  
+
+  # For example Inputs for the web application module
+  vpc_cidr_block              = "10.0.0.0/16"
+  public_subnet_cidr_block    = "10.0.1.0/24"
+  private_subnet_cidr_block   = "10.0.2.0/24"
+  availability_zone           = "us-west-2a"
+  scaling_adjustment          = 2
+  cloudwatch_notification_arn = "arn:aws:sns:us-west-2:123456789012:my-notification-topic"
 }
